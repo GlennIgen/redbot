@@ -1,0 +1,43 @@
+# STABLE ALPINE BUILD
+FROM alpine:latest
+#ENV DEBCONF_NOWARNINGS="yes"
+#
+ARG BOTNAME=Test
+ARG PREFIX=½
+ARG TOKEN=MTEwMTU0MDUzMTM0OTI0NjEwNA.G_yeBy.nF0lOqQ5-RmV7fJ-AelcguKCxyN6Woum-54Wk0
+ARG USERNAME=redbot
+ARG USER_UID=1000
+#ARG USER_GID=$USER_UID
+#
+#Create user defined by $USERNAME
+RUN adduser -u $USER_UID -D $USERNAME \
+    #
+    # Add sudo support, updating and installing requirements for Red-DiscordBot.
+    && apk update \
+    && apk upgrade --no-cache \
+    && apk add python3 python3-dev py3-virtualenv py3-pip git openjdk11-jre-headless build-base linux-headers htop nano \
+    && mkdir /app \
+    && mkdir /scripts \
+    && chown $USERNAME:$USERNAME /app \
+    && chown $USERNAME:$USERNAME /scripts
+    ENV PATH="$PATH:/home/$USERNAME/redenv/bin"
+    ENV PATH="$PATH:/scripts/"
+    COPY start_bot.sh /scripts/
+    RUN printf "start=1\
+    \nwhile [ \$start -gt 0 ]; do\
+    \nif [ -d /app/$BOTNAME ]; then\
+    \nredbot $BOTNAME --token $TOKEN --prefix $PREFIX\
+    \nelse\
+    \nredbot-setup --no-prompt --instance-name $BOTNAME --data-path /app/$BOTNAME &&redbot $BOTNAME --token $TOKEN --prefix $PREFIX\
+    \nfi\
+    \ndone" >> /scripts/start_bot.sh \
+    && chown $USERNAME:$USERNAME /scripts/start_bot.sh \
+    && chmod +x /scripts/start_bot.sh
+
+USER $USERNAME
+
+RUN python -m venv ~/redenv \
+&& . ~/redenv/bin/activate \
+&& python -m pip install -U pip psutil setuptools wheel \
+&& python -m pip install -U Red-DiscordBot
+#ENTRYPOINT [ "init" ]
