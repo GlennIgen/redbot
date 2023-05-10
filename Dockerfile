@@ -15,7 +15,7 @@ RUN adduser -u $USER_UID -D $USERNAME \
     && apk update \
     && apk upgrade --no-cache \
     && apk add python3 python3-dev py3-virtualenv py3-pip git openjdk11-jre-headless build-base linux-headers htop nano \
-    # Creating folders for redbot
+    # Creating folders for redbot - test
     && mkdir /app \
     && mkdir /scripts \
     && chown $USERNAME:$USERNAME /app \
