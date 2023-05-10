@@ -1,5 +1,5 @@
 # STABLE ALPINE BUILD
-# https://hub.docker.com/r/minialta/redbot
+# https://hub.docker.com/r/glennigen/redbot:latest-alpine
 FROM alpine:latest
 #
 ENV BN=NameNotSet
