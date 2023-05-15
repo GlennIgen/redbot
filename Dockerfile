@@ -41,7 +41,7 @@ RUN printf "scriptstart=1\
 \nclear\
 \necho 'Red-DsicordBot' installed. Starting instance...\
 \nsleep 2\
-\nredbot-setup --no-prompt --instance-name \$BN --data-path /app/\$BN &&redbot \$BN --token \$TOKEN --prefix \$PF\
+\nredbot-setup --no-prompt --instance-name \$BN --data-path /app/\$BN && echo '\$PF' | redbot \$BN --token \$TOKEN\
 \nelse\
 \nclear\
 \necho '~/redenv' exists.\
@@ -53,14 +53,14 @@ RUN printf "scriptstart=1\
 \necho Creating discord bot with supplied settings...\
 \nsleep 2\
 \nsource ~/redenv/bin/activate\
-\nredbot-setup --no-prompt --instance-name \$BN --data-path /app/\$BN &&redbot \$BN --token \$TOKEN --prefix \$PF\
+\nredbot-setup --no-prompt --instance-name \$BN --data-path /app/\$BN && echo '\$PF' | redbot \$BN --token \$TOKEN\
 \nelse\
 \nclear\
 \necho Necessary dirs and files exists.\
 \necho Starting discord bot...\
 \nsleep 1\
 \nsource ~/redenv/bin/activate\
-\nredbot \$BN --token \$TOKEN --prefix \$PF\
+\nredbot \$BN --token \$TOKEN\
 \nfi\
 \nfi\
 \ndone" >> /scripts/start_bot.sh

@@ -15,7 +15,7 @@ python -m pip install -U Red-DiscordBot
 clear
 echo "'Red-DsicordBot' installed. Starting instance..."
 sleep 2
-redbot-setup --no-prompt --instance-name $BN --data-path /app/$BN &&redbot $BN --token $TOKEN --prefix $PF
+redbot-setup --no-prompt --instance-name $BN --data-path /app/$BN && echo '$PF' | redbot $BN --token $TOKEN
 else
 clear
 echo "'~/redenv' exists."
@@ -27,14 +27,14 @@ echo "Missing '/app/$BN'!"
 echo "Creating discord bot with supplied settings..."
 sleep 2
 source ~/redenv/bin/activate
-redbot-setup --no-prompt --instance-name $BN --data-path /app/$BN &&redbot $BN --token $TOKEN --prefix $PF
+redbot-setup --no-prompt --instance-name $BN --data-path /app/$BN && echo '$PF' | redbot $BN --token $TOKEN
 else
 clear
 echo "Necessary dirs and files exists."
 echo "Starting discord bot..."
 sleep 1
 source ~/redenv/bin/activate
-redbot $BN --token $TOKEN --prefix $PF
+redbot $BN --token $TOKEN
 fi
 fi
 done
