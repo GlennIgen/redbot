@@ -25,51 +25,51 @@ ENV PATH="$PATH:/scripts/"
 COPY start_bot.sh /scripts/
 #
 # Creating startup script
-RUN printf "scriptstart=1\
-\nwhile [ \$scriptstart -gt 0 ]; do\
-\necho Checking for '~/redenv'...\
+RUN printf 'scriptstart=1\
+\nwhile [ $scriptstart -gt 0 ]; do\
+\necho Checking for "~/redenv"...\
 \nsleep 2\
 \nif [ ! -d ~/redenv ]; then\
-\necho Missing '~/redenv'\
+\necho Missing "~/redenv"\
 \nsleep 1\
-\necho Installing 'redenv' and 'Red-DiscordBot'...\
+\necho Installing "redenv" and "Red-DiscordBot"...\
 \nsleep 2\
 \npython -m venv ~/redenv\
 \nsource ~/redenv/bin/activate\
 \npython -m pip install -U pip psutil setuptools wheel\
 \npython -m pip install -U Red-DiscordBot\
 \nclear\
-\necho 'Red-DsicordBot' installed. Starting instance...\
+\necho "Red-DsicordBot" installed. Starting instance...\
 \nsleep 2\
-\nredbot-setup --no-prompt --instance-name \$BN --data-path /app/\$BN && echo '\$PF' | redbot \$BN --token \$TOKEN\
+\nredbot-setup --no-prompt --instance-name $BN --data-path /app/$BN && echo "$PF" | redbot $BN --token $TOKEN\
 \nelse\
 \nclear\
-\necho '~/redenv' exists.\
+\necho "~/redenv" exists.\
 \nsleep 1\
-\necho Checking if '/app/\$BN' exists...\
+\necho Checking if "/app/$BN" exists...\
 \nsleep 1\
-\nif [ ! -d /app/\$BN ]; then\
-\necho Missing '/app/\$BN'!\
+\nif [ ! -d /app/$BN ]; then\
+\necho Missing "/app/$BN"!\
 \necho Creating discord bot with supplied settings...\
 \nsleep 2\
 \nsource ~/redenv/bin/activate\
-\nredbot-setup --no-prompt --instance-name \$BN --data-path /app/\$BN && echo '\$PF' | redbot \$BN --token \$TOKEN\
+\nredbot-setup --no-prompt --instance-name $BN --data-path /app/$BN && echo "$PF" | redbot $BN --token $TOKEN\
 \nelse\
 \nclear\
 \necho Necessary dirs and files exists.\
 \necho Starting discord bot...\
 \nsleep 1\
 \nsource ~/redenv/bin/activate\
-\nredbot \$BN --token \$TOKEN\
+\nredbot $BN --token $TOKEN\
 \nfi\
 \nfi\
-\ndone" >> /scripts/start_bot.sh
+\ndone' >> /scripts/start_bot.sh
 #
 RUN chown $USERNAME:$USERNAME /scripts/start_bot.sh \
     && chmod +x /scripts/start_bot.sh
 #
 USER $USERNAME
 #
-ENTRYPOINT [ "sh","./scripts/start_bot.sh" ]
+#ENTRYPOINT [ "sh","./scripts/start_bot.sh" ]
 #
 # docker run -e "BN=BOTName" -e "PF=PREFIX" -e "TOKEN=TOKEN" --name redbot -v /host/mount/point:/app -d glennigen/redbot:latest-alpine
