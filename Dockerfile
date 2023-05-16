@@ -5,6 +5,7 @@ FROM alpine:latest
 ENV BN=NameNotSet
 ENV PF=PrefixNotSet
 ENV TOKEN=TokenNotSet
+ENV OVERWRITE_INSTANCE=No
 ARG USERNAME=redbot
 ARG USER_UID=1000
 #
@@ -41,7 +42,11 @@ RUN printf 'scriptstart=1\
 \nclear\
 \necho "Red-DsicordBot" installed. Starting instance...\
 \nsleep 2\
+\nif [ "$OVERWRITE_INSTANCE" == "Yes" ]; then\
+\nredbot-setup --no-prompt --instance-name $BN --data-path /app/$BN --overwrite-existing-instance && echo "$PF" | redbot $BN --token $TOKEN\
+\nelse\
 \nredbot-setup --no-prompt --instance-name $BN --data-path /app/$BN && echo "$PF" | redbot $BN --token $TOKEN\
+\nfi\
 \nelse\
 \nclear\
 \necho "~/redenv" exists.\
@@ -53,7 +58,11 @@ RUN printf 'scriptstart=1\
 \necho Creating discord bot with supplied settings...\
 \nsleep 2\
 \nsource ~/redenv/bin/activate\
+\nif [ "$OVERWRITE_INSTANCE" == "Yes" ]; then\
+\nredbot-setup --no-prompt --instance-name $BN --data-path /app/$BN --overwrite-existing-instance && echo "$PF" | redbot $BN --token $TOKEN\
+\nelse\
 \nredbot-setup --no-prompt --instance-name $BN --data-path /app/$BN && echo "$PF" | redbot $BN --token $TOKEN\
+\nfi\
 \nelse\
 \nclear\
 \necho Necessary dirs and files exists.\
