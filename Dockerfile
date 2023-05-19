@@ -79,6 +79,6 @@ RUN chown $USERNAME:$USERNAME /scripts/start_bot.sh \
 #
 USER $USERNAME
 #
-#ENTRYPOINT [ "sh","./scripts/start_bot.sh" ]
+ENTRYPOINT [ "sh","./scripts/start_bot.sh" ]
 #
 # docker run -e "BN=BOTName" -e "PF=PREFIX" -e "TOKEN=TOKEN" --name redbot -v /host/mount/point:/app -d glennigen/redbot:latest-alpine
