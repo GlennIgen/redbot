@@ -12,3 +12,7 @@ Docker Hub: https://hub.docker.com/r/glennigen/redbot<br/>
 
 ---
 I created this, because I wanted to run Red in a container, so I wouldn't have to maintain the bot and the OS myself. Also this is lightweight about 800MB :)
+
+---
+I have setup the container in Unraid with these settings.<br/>
+![Unraid Image](https://github.com/GlennIgen/redbot/assets/64850623/051c84f0-eb28-41b7-b66f-faa3368aa355)
