@@ -24,6 +24,7 @@ RUN adduser -u $USER_UID -D $USERNAME \
 ENV PATH="$PATH:/home/$USERNAME/redenv/bin"
 ENV PATH="$PATH:/scripts/"
 COPY start_bot.sh /scripts/
+COPY Lavalink.jar /scripts/
 #
 # Creating startup script
 RUN printf 'scriptstart=1\
@@ -40,6 +41,7 @@ RUN printf 'scriptstart=1\
 \npython -m pip install -U pip psutil setuptools wheel\
 \npython -m pip install -U Red-DiscordBot\
 \n#Moving Lavalink.jar to /app/$BN/cogs/Audio/\
+\nmkdir /app/$BN/cogs/Audio/ -p\
 \ncp /scripts/Lavalink.jar /app/$BN/cogs/Audio/Lavalink.jar -f\
 \n#Moving Lavalink.jar to /app/$BN/cogs/Audio/\
 \nclear\
@@ -47,6 +49,7 @@ RUN printf 'scriptstart=1\
 \nsleep 2\
 \nif [ "$OVERWRITE_INSTANCE" == "Yes" ]; then\
 \n#Moving Lavalink.jar to /app/$BN/cogs/Audio/\
+\nmkdir /app/$BN/cogs/Audio/ -p\
 \ncp /scripts/Lavalink.jar /app/$BN/cogs/Audio/Lavalink.jar -f\
 \n#Moving Lavalink.jar to /app/$BN/cogs/Audio/\
 \nredbot-setup --no-prompt --instance-name $BN --data-path /app/$BN --overwrite-existing-instance && echo "$PF" | redbot $BN --token $TOKEN\
@@ -66,11 +69,13 @@ RUN printf 'scriptstart=1\
 \nsource ~/redenv/bin/activate\
 \nif [ "$OVERWRITE_INSTANCE" == "Yes" ]; then\
 \n#Moving Lavalink.jar to /app/$BN/cogs/Audio/\
+\nmkdir /app/$BN/cogs/Audio/ -p\
 \ncp /scripts/Lavalink.jar /app/$BN/cogs/Audio/Lavalink.jar -f\
 \n#Moving Lavalink.jar to /app/$BN/cogs/Audio/\
 \nredbot-setup --no-prompt --instance-name $BN --data-path /app/$BN --overwrite-existing-instance && echo "$PF" | redbot $BN --token $TOKEN\
 \nelse\
 \n#Moving Lavalink.jar to /app/$BN/cogs/Audio/\
+\nmkdir /app/$BN/cogs/Audio/ -p\
 \ncp /scripts/Lavalink.jar /app/$BN/cogs/Audio/Lavalink.jar -f\
 \n#Moving Lavalink.jar to /app/$BN/cogs/Audio/\
 \nredbot-setup --no-prompt --instance-name $BN --data-path /app/$BN && echo "$PF" | redbot $BN --token $TOKEN\
@@ -81,6 +86,7 @@ RUN printf 'scriptstart=1\
 \necho Starting discord bot...\
 \nsleep 1\
 \n#Moving Lavalink.jar to /app/$BN/cogs/Audio/\
+\nmkdir /app/$BN/cogs/Audio/ -p\
 \ncp /scripts/Lavalink.jar /app/$BN/cogs/Audio/Lavalink.jar -f\
 \n#Moving Lavalink.jar to /app/$BN/cogs/Audio/\
 \nsource ~/redenv/bin/activate\
@@ -90,7 +96,9 @@ RUN printf 'scriptstart=1\
 \ndone' >> /scripts/start_bot.sh
 #
 RUN chown $USERNAME:$USERNAME /scripts/start_bot.sh \
-    && chmod +x /scripts/start_bot.sh
+    && chmod +x /scripts/start_bot.sh \
+    && chown $USERNAME:$USERNAME /scripts/Lavalink.jar \
+    && chmod 644 /scripts/Lavalink.jar
 #
 USER $USERNAME
 #
