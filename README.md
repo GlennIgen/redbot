@@ -1,4 +1,5 @@
 # Red (formerly known as Red-DiscordBot) - unofficial repo
+Check out the branch custom-lavalink. I use that with custom Lavalink.jar file.
 Unofficial repo for Red docker container<br/>
 Official repo: https://github.com/Cog-Creators/Red-DiscordBot <br/>
 
