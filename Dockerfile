@@ -41,7 +41,7 @@ RUN printf 'scriptstart=1\
 \npython -m pip install -U pip psutil setuptools wheel\
 \npython -m pip install -U Red-DiscordBot\
 \nclear\
-\necho "Red-DsicordBot" installed. Starting instance...\
+\necho "Red-DiscordBot" installed. Starting instance...\
 \nsleep 2\
 \nif [ "$OVERWRITE_INSTANCE" == "Yes" ]; then\
 \nredbot-setup --no-prompt --instance-name $BN --data-path /app/$BN --overwrite-existing-instance | redbot $BN --token $TOKEN --prefix $PF\
