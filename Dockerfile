@@ -15,7 +15,7 @@ RUN adduser -u $USER_UID -D $USERNAME \
     # Updating and installing requirements for Red-DiscordBot.
     && apk update \
     && apk upgrade --no-cache \
-    && apk add python3 python3-dev py3-virtualenv py3-pip git openjdk17-jre-headless build-base linux-headers htop nano \
+    && apk add python3 python3-dev py3-virtualenv py3-pip git openjdk17-jre-headless build-base linux-headers htop nano runuser\
     # Creating folders for redbot
     && mkdir /app \
     && mkdir /scripts \
@@ -24,6 +24,7 @@ RUN adduser -u $USER_UID -D $USERNAME \
 ENV PATH="$PATH:/home/$USERNAME/redenv/bin"
 ENV PATH="$PATH:/scripts/"
 COPY start_bot.sh /scripts/
+COPY entrypoint.sh /scripts/
 #
 # Creating startup script
 RUN printf 'scriptstart=1\
@@ -69,12 +70,12 @@ RUN printf 'scriptstart=1\
 \necho Starting discord bot...\
 \nsleep 1\
 \nsource ~/redenv/bin/activate\
-\nredbot $BN --token $TOKEN\
+\nredbot $BN --token $TOKEN --prefix $PF\
 \nfi\
 \nfi\
 \ndone' >> /scripts/start_bot.sh
 
 RUN chown $USERNAME:$USERNAME /scripts/start_bot.sh \
     && chmod +x /scripts/start_bot.sh
-USER $USERNAME
-ENTRYPOINT [ "sh","./scripts/start_bot.sh" ]
+ENTRYPOINT [ "/bin/sh","./scripts/entrypoint.sh" ]
+CMD [ "/bin/sh","./scripts/start_bot.sh" ]
