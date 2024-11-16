@@ -1,81 +1,35 @@
-# STABLE ALPINE BUILD
-# https://hub.docker.com/r/glennigen/redbot:latest-alpine
-FROM alpine:latest
+# STABLE DEBIAN BUILD
+# https://hub.docker.com/r/glennigen/redbot:latest-debian
+#FROM alpine:latest
+FROM debian:stable-slim
 #
-ENV BN=NameNotSet
-ENV PF=PrefixNotSet
-ENV TOKEN=TokenNotSet
-ENV OVERWRITE_INSTANCE=No
-ARG USERNAME=redbot
-ARG USER_UID=1000
+ENV RED_INSTANCENAME=
+ENV RED_PREFIX=
+ENV RED_TOKEN=
+ENV RED_OVERWRITE_INSTANCE=No
+ENV RED_USER_ID=99
+ENV RED_USERNAME=redbot
+ENV RED_ADDITIONAL_PATHS=/home/${RED_USERNAME}/redenv/bin:/scripts
+ENV PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:${RED_ADDITIONAL_PATHS}"
 #
-#Create user defined by $USERNAME
-RUN adduser -u $USER_UID -D $USERNAME \
-    #
-    # Updating and installing requirements for Red-DiscordBot.
-    && apk update \
-    && apk upgrade --no-cache \
-    && apk add python3 python3-dev py3-virtualenv py3-pip git openjdk17-jre-headless build-base linux-headers htop nano runuser\
-    # Creating folders for redbot
-    && mkdir /app \
-    && mkdir /scripts \
-    && chown $USERNAME:$USERNAME /app \
-    && chown $USERNAME:$USERNAME /scripts
-ENV PATH="$PATH:/home/$USERNAME/redenv/bin"
-ENV PATH="$PATH:/scripts/"
-COPY start_bot.sh /scripts/
-COPY entrypoint.sh /scripts/
+#Create user defined by ${RED_USERNAME}
+RUN useradd -m -s /bin/bash -u $RED_USER_ID $RED_USERNAME
+RUN usermod -aG users $RED_USERNAME
 #
-# Creating startup script
-RUN printf 'scriptstart=1\
-\nwhile [ $scriptstart -gt 0 ]; do\
-\necho Checking for "~/redenv"...\
-\nsleep 2\
-\nif [ ! -d ~/redenv ]; then\
-\necho Missing "~/redenv"\
-\nsleep 1\
-\necho Installing "redenv" and "Red-DiscordBot"...\
-\nsleep 2\
-\npython -m venv ~/redenv\
-\nsource ~/redenv/bin/activate\
-\npython -m pip install -U pip psutil setuptools wheel\
-\npython -m pip install -U Red-DiscordBot\
-\nclear\
-\necho "Red-DiscordBot" installed. Starting instance...\
-\nsleep 2\
-\nif [ "$OVERWRITE_INSTANCE" == "Yes" ]; then\
-\nredbot-setup --no-prompt --instance-name $BN --data-path /app/$BN --overwrite-existing-instance | redbot $BN --token $TOKEN --prefix $PF\
-\nelse\
-\nredbot-setup --no-prompt --instance-name $BN --data-path /app/$BN | redbot $BN --token $TOKEN --prefix $PF\
-\nfi\
-\nelse\
-\nclear\
-\necho "~/redenv" exists.\
-\nsleep 1\
-\necho Checking if "/app/$BN" exists...\
-\nsleep 1\
-\nif [ ! -d /app/$BN ]; then\
-\necho Missing "/app/$BN"!\
-\necho Creating discord bot with supplied settings...\
-\nsleep 2\
-\nsource ~/redenv/bin/activate\
-\nif [ "$OVERWRITE_INSTANCE" == "Yes" ]; then\
-\nredbot-setup --no-prompt --instance-name $BN --data-path /app/$BN --overwrite-existing-instance | redbot $BN --token $TOKEN --prefix $PF\
-\nelse\
-\nredbot-setup --no-prompt --instance-name $BN --data-path /app/$BN | redbot $BN --token $TOKEN --prefix $PF\
-\nfi\
-\nelse\
-\nclear\
-\necho Necessary dirs and files exists.\
-\necho Starting discord bot...\
-\nsleep 1\
-\nsource ~/redenv/bin/activate\
-\nredbot $BN --token $TOKEN --prefix $PF\
-\nfi\
-\nfi\
-\ndone' >> /scripts/start_bot.sh
+# Updating and installing requirements for Red-DiscordBot.
+RUN apt-get update -y
+RUN apt-get full-upgrade -y
+RUN apt-get install -y python3 python3-dev python3-venv git openjdk-17-jre-headless build-essential nano dos2unix
+# Creating folders for Red
+RUN apt-get clean -y
+RUN mkdir /app
+RUN mkdir /scripts
+RUN chown $RED_USERNAME:users /app
+RUN chown $RED_USERNAME:users /scripts
+COPY scripts/start.sh /scripts/
+RUN chown $RED_USERNAME:users /scripts/start.sh
+RUN chmod +x /scripts/start.sh
+RUN dos2unix /scripts/start.sh
 
-RUN chown $USERNAME:$USERNAME /scripts/start_bot.sh \
-    && chmod +x /scripts/start_bot.sh
-ENTRYPOINT [ "/bin/sh","./scripts/entrypoint.sh" ]
-CMD [ "/bin/sh","./scripts/start_bot.sh" ]
+USER $RED_USERNAME
+ENTRYPOINT [ "/bin/bash","./scripts/start.sh" ]

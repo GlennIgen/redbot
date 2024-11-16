@@ -1,3 +1,5 @@
 docker build -t glennigen/redbot:customlavalink-alpine .
-docker run -e "BN=BOTNAME" -e "PF=½" -e "TOKEN=TOKEN" --name ContainerName -v C:\mount\point\redbot:/app -d glennigen/redbot:TAG
-docker push glennigen/redbot:latest-alpine
+docker build -t glennigen/redbot:latest-debian .
+docker run -e "RED_INSTANCENAME=INSTANCENAME" -e "RED_PREFIX=½" -e "RED_TOKEN=TOKEN" --name ContainerName -v C:\mount\point\redbot:/app:rw -d glennigen/redbot:TAG
+docker run -it -e "RED_INSTANCENAME=TestBot" -e "RED_PREFIX=½" -e "RED_TOKEN=TOKEN"--name ContainerName -v C:\mount\point\redbot:/app:rw glennigen/redbot:TAG
+docker push glennigen/redbot:latest-debian

@@ -1,0 +1,26 @@
+services:
+  redbot:
+#    build: #build directly from dockerfile, the don't use the image
+#      context: .. # Go back a directory
+#      dockerfile: ./dockerfile
+    image: glennigen/redbot:latest-debian
+    container_name: redbot
+    restart: always
+    user: "99:100" # Set user and group
+#Use "depends_on" if you want to run Lavalink seperately, or something else.
+#    depends_on:
+#      - LavaLink
+    env_file:
+      - .env
+    volumes: #All the cogs and core elements are in /app
+      - /host/mount/point:/app:rw
+    networks: #network to use, can be ignored/disabled.
+      - rednet
+
+networks: # Define custom container network - this is just a template. Use/change/delete it.
+  rednet:
+    driver: bridge
+    ipam: # Network config
+      config:
+        - subnet: 10.8.1.0/24
+          gateway: 10.8.1.1

@@ -1,0 +1,66 @@
+# STABLE DEBIAN-SLIM BUILD
+FROM debian:bullseye-slim
+ENV DEBCONF_NOWARNINGS="yes"
+#
+ARG BOTNAME=Test
+ARG PREFIX=½
+ARG TOKEN=MTEwMTU0MDUzMTM0OTI0NjEwNA.G_yeBy.nF0lOqQ5-RmV7fJ-AelcguKCxyN6Woum-54Wk0
+ARG USERNAME=redbot
+ARG USER_UID=1000
+ARG USER_GID=$USER_UID
+#
+#Create user defined by $USERNAME
+RUN groupadd --gid $USER_GID $USERNAME \
+    && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
+    #
+    # Add sudo support, updating and installing requirements for Red-DiscordBot.
+    && apt-get update \
+    && apt-get upgrade -y \
+    && apt-get install -y sudo python3 python3-dev python3-venv python3-pip git openjdk-11-jre-headless build-essential nano htop \
+    && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
+    && chmod 0440 /etc/sudoers.d/$USERNAME \
+    #
+    #Clearing and disabling apt-get
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* \
+    #
+    # Creating /app and /scripts dirs, and changing ownership to $USERNAME
+    && mkdir /app \
+    && mkdir /scripts \
+    && chown $USERNAME:$USERNAME /app \
+    && chown $USERNAME:$USERNAME /scripts
+#
+# Adding paths to $PATH
+ENV PATH="$PATH:/home/$USERNAME/redenv/bin"
+ENV PATH="$PATH:/scripts/"
+#
+# Copying start_bot.sh script to /scripts
+COPY start_bot.sh /scripts/
+#
+# Adding content to start_bor.sh script
+RUN printf "start=1\
+\nwhile [ \$start -gt 0 ]; do\
+\nif [ -d /app/$BOTNAME ]; then\
+\nredbot $BOTNAME --token $TOKEN --prefix $PREFIX\
+\nelse\
+\nredbot-setup --no-prompt --instance-name $BOTNAME --data-path /app/$BOTNAME &&redbot $BOTNAME --token $TOKEN --prefix $PREFIX\
+\nfi\
+\ndone" >> /scripts/start_bot.sh \
+#
+# Changing ownership of start_bot.sh script to user $USERNAME
+&& chown $USERNAME:$USERNAME /scripts/start_bot.sh \
+#
+# Making start_bot.sh script executable
+&& chmod +x /scripts/start_bot.sh
+#
+# Changing active user from root to $USERNAME
+USER $USERNAME
+#
+# Installing Red-DiscordBot
+RUN python3.9 -m venv ~/redenv \
+&& . ~/redenv/bin/activate \
+&& python3.9 -m pip install -U pip setuptools wheel \
+&& python3.9 -m pip install -U Red-DiscordBot
+#
+# Making container rin start_bot.sh script at launch
+ENTRYPOINT [ "sh", "./scripts/start_bot.sh" ]
