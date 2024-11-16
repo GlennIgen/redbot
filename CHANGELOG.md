@@ -1,6 +1,6 @@
 # Changelog
 
-## Version 1.1.0 (2024-11-15)
+## Version 1.1.0 (2024-11-16)
 ### Major Updates
 - Migrated to a Debian-based Dockerfile for improved compatibility and stability.
   * New Dockerfile created at the root of the repository and named `Dockerfile`.
