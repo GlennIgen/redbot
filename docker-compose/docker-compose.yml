@@ -1,6 +1,7 @@
+# This Compose file is for reference only. Modify as needed.
 services:
   redbot:
-#    build: #build directly from dockerfile, the don't use the image
+#    build: #build directly from dockerfile
 #      context: .. # Go back a directory
 #      dockerfile: ./dockerfile
     image: glennigen/redbot:latest-debian
@@ -8,14 +9,30 @@ services:
     restart: always
     user: "99:100" # Set user and group
 #Use "depends_on" if you want to run Lavalink seperately, or something else.
-#    depends_on:
-#      - LavaLink
+    depends_on:
+      - lavalink
     env_file:
       - .env
     volumes: #All the cogs and core elements are in /app
-      - /host/mount/point:/app:rw
-    networks: #network to use, can be ignored/disabled.
-      - rednet
+      - /host/path/to/storage_redbot:/app:rw
+    networks: #network to use, can be ignored/disabled/changed.
+      rednet:
+        ipv4_address: 10.8.1.3
+  
+  lavalink:
+    image: glennigen/lavalink:latest-alpine
+    container_name: lavalink
+    restart: always
+
+    #Define user and group inside container, can be ignored.
+    #user: "99:100"
+    #Set the IP address for the LavaLink container. Remember to match in application.yml file under "server: address" section
+    networks:
+      rednet:
+        ipv4_address: 10.8.1.2
+    volumes:
+      - /host/path/to/storage_lavalink:/app:rw
+
 
 networks: # Define custom container network - this is just a template. Use/change/delete it.
   rednet:
